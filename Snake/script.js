@@ -1,34 +1,41 @@
+// Canvas Element wird geholt
 let canvas = document.getElementById("canvas1");
+// Kontext des Canvas wird festgelegt
 let ctx = canvas.getContext("2d");
 
+// Breite und Höhe des Canvas werden definiert
 canvas.width = 600;
 canvas.height = 600;
 
+// Größe der Spielboxen
 let box = 20;
+// Anzahl der Spielboxen im Spielfeld
 let playGround = 20;
 
+// Farben für die Schlange
 let colors = ["#ff0000aa", "#ff8800aa", "#ffff00aa", "#00ff00aa", "#0000ffaa", "#440099aa", "#ff77ffaa"];
 
 
-// Snake
+// Schlange initialisieren
 let snake = [];
 snake[0] = { x: playGround / 2 * box, y: playGround / 2 * box };
 
-// Food
+// Futter initialisieren
 let food = {
     x: Math.floor(Math.random() * playGround) * box,
     y: Math.floor(Math.random() * playGround) * box
 };
 
-// Score
+// Punktzahl initialisieren
 let score = 0;
 
-// Direction
+// Richtung initialisieren
 let direction;
 
-// Event Listener
+// Event Listener für Tastendrücke
 document.addEventListener("keydown", directionHandler);
 
+// Funktion zur Handhabung der Richtungsänderungen
 function directionHandler(event) {
     let key = event.keyCode;
 
@@ -59,11 +66,12 @@ function directionHandler(event) {
             break;
     }
 
+    // Bewegung der Schlange und Zeichnen des Spiels
     moveSnake();
     draw();
 }
 
-// Collision
+// Kollisionsüberprüfung
 function collision(head, array) {
     for (let i = 0; i < array.length; i++) {
         if (head.x == array[i].x && head.y == array[i].y) {
@@ -73,19 +81,19 @@ function collision(head, array) {
     return false;
 }
 
-// Snake Movement
+// Bewegung der Schlange
 function moveSnake() {
-    // Old Head Position
+    // Alte Kopfposition speichern
     let snakeX = snake[0].x;
     let snakeY = snake[0].y;
 
-    // New Head Position
+    // Neue Kopfposition berechnen
     if (direction == "LEFT") snakeX -= box;
     if (direction == "UP") snakeY -= box;
     if (direction == "RIGHT") snakeX += box;
     if (direction == "DOWN") snakeY += box;
 
-    // Snake eats food
+    // Überprüfen ob Schlange das Futter frisst
     if (snakeX == food.x && snakeY == food.y) {
         score++;
         food = {
@@ -96,63 +104,57 @@ function moveSnake() {
         snake.pop();
     }
 
-    // New Head
+    // Neuen Kopf erstellen
     let newHead = {
         x: snakeX,
         y: snakeY
     }
 
-    // Game Over
+    // Spielende überprüfen
     if (snakeX < 0 || snakeX > canvas.width - box || snakeY < 0 || snakeY > canvas.height - box || collision(newHead, snake)) {
         clearInterval(game);
         alert("Game Over");
     }
 
+    // Neuen Kopf zur Schlange hinzufügen
     snake.unshift(newHead);
 
+    // Spiel zeichnen
     draw();
 }
 
-// Draw
+// Zeichnen des Spiels
 function draw() {
-    // Background
+    // Hintergrund zeichnen
     ctx.fillStyle = "#011016";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Rainbow Snake
+    // Schlange zeichnen
     for (let i = 0; i < snake.length; i++) {
         ctx.fillStyle = 'white';
         ctx.fillStyle = colors[i % colors.length];
         ctx.fillRect(snake[i].x, snake[i].y, box, box);
     }
 
-    // ! Old Code
-    // Snake
-    // for (let i = 0; i < snake.length; i++) {
-    //     ctx.fillStyle = "white";
-    //     ctx.fillRect(snake[i].x, snake[i].y, box, box);
-    // }
-
-    // Food
+    // Futter zeichnen
     ctx.fillStyle = "red";
     ctx.fillRect(food.x, food.y, box, box);
 
-    // Score
+    // Punktzahl anzeigen
     ctx.fillStyle = "white";
     ctx.font = "45px Changa one";
     ctx.fillText(score, 2 * box, 1.6 * box);
 
-    // Border
+    // Rand zeichnen
     ctx.strokeStyle = "white";
     ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
-    // Direction
+    // Richtung anzeigen
     ctx.fillStyle = "white";
     ctx.font = "20px Changa one";
     ctx.fillText(direction, 2 * box, 3 * box);
 
 }
 
-// Game
+// Spiel starten
 let game = setInterval(moveSnake, 500);
-

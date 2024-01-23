@@ -19,4 +19,7 @@ body {
 canvas {
     background-color: #022232;
     position: absolute;
+    border: 1px solid #fff;
+    border-radius: 12px;
+    overflow: hidden;
 }
